@@ -1,15 +1,14 @@
 import {observable, computed, action} from 'mobx'
 import {TCoin, TCoinDiff} from "../types";
 import axios from "axios";
-import store from "./index";
 
 class CurrencyStore {
-  @observable private coins: TCoin[] = []
+  @observable private items: TCoin[] = []
   @observable private diffObj: TCoinDiff = {}
 
   @computed
   get getItems() {
-    return this.coins
+    return this.items
   }
 
   @computed
@@ -19,21 +18,28 @@ class CurrencyStore {
 
   @action
   setItems = (items: TCoin[]): void => {
-    this.diffObj = this.diffCurrencies(this.coins, items).reduce((initObj: TCoinDiff, obj: TCoin) => {
-      const newObj: TCoin = items.find(o => o.name === obj.name)!
-      const oldDiff: TCoin = this.coins.find(item => item.name === newObj.name) || obj
-      const color: string = newObj.price === oldDiff.price ? '' : newObj.price > oldDiff.price ? 'green' : 'red'
-      initObj[newObj.name] = color
+    this.diffObj = this.diffCurrencies(this.items, items).reduce((initObj: TCoinDiff, obj: TCoin) => {
+
+      // console.log(this.items, 'this.items-------------------')
+      // console.log(obj, '----------------obj=============')
+      // const newObj: TCoin = items.find(o => o.name === obj.name)!
+      // const oldDiff: TCoin = this.items.find(item => item.name === newObj.name)!
+      // console.log(JSON.stringify(oldDiff), 'oldDiff=================')
+      // console.log(JSON.stringify(newObj), 'newObj=================')
+      // const color: string = newObj.price === oldDiff.price ? '' : newObj.price > oldDiff.price ? 'green' : 'red'
+      // initObj[newObj.name] = color
+      // console.log(initObj, 'initObj==========================')
       return initObj
     }, {})
-    this.coins = items
+    this.items = items
+    console.log(JSON.stringify(this.diffObj), '999999999999999999')
+
   }
 
   @action
   fetchCoins = () => {
     axios.get('https://min-api.cryptocompare.com/data/top/totalvolfull?limit=10&tsym=USD').then(({data}) => {
       const allCoins: TCoin[] = data.Data.map((coin: any) => {
-        console.log(coin)
         const obj: TCoin = {
           name: coin.CoinInfo.Name,
           fullName: coin.CoinInfo.FullName,
@@ -43,29 +49,18 @@ class CurrencyStore {
         }
         return obj
       })
-      console.log(data.Data, 'res')
+      console.log(allCoins, 'aaaaaallll')
       this.setItems(allCoins)
     })
-    return []
   }
 
-  diffCurrencies(arr1
-                   :
-                   TCoin[], arr2
-                   :
-                   TCoin[]
-  ) {
+  diffCurrencies(arr1: TCoin[], arr2: TCoin[]) {
+    console.log(JSON.stringify(arr1), '111111111')
+    console.log(arr2, '2222222222222')
     return arr1.filter((obj, index) => {
-      if (obj.name !== arr2[index].name) {
-        return true;
-      } else {
-        return false;
-      }
+      return obj.price !== arr2[index].price;
     })
-
   }
-
-
 }
 
 export default CurrencyStore
