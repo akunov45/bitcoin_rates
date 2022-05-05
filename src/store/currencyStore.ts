@@ -18,22 +18,19 @@ class CurrencyStore {
 
   @action
   setItems = (items: TCoin[]): void => {
-    this.diffObj = this.diffCurrencies(this.items, items).reduce((initObj: TCoinDiff, obj: TCoin) => {
-
-      // console.log(this.items, 'this.items-------------------')
-      // console.log(obj, '----------------obj=============')
-      // const newObj: TCoin = items.find(o => o.name === obj.name)!
-      // const oldDiff: TCoin = this.items.find(item => item.name === newObj.name)!
-      // console.log(JSON.stringify(oldDiff), 'oldDiff=================')
-      // console.log(JSON.stringify(newObj), 'newObj=================')
-      // const color: string = newObj.price === oldDiff.price ? '' : newObj.price > oldDiff.price ? 'green' : 'red'
-      // initObj[newObj.name] = color
-      // console.log(initObj, 'initObj==========================')
+    this.diffObj = this.diffCurrencies(this.items,items).reduce((initObj: TCoinDiff, obj: TCoin)=>{
+      console.log(obj, '----------------obj=============')
+      const newObj: TCoin = items.find(o => o.name === obj.name)!
+      console.log(newObj,'newObjjjjjjjjjjjjjj')
+      const oldDiff: TCoin = this.items.find(item => item.name === newObj.name)!
+      console.log(JSON.stringify(oldDiff), 'oldDiff=================')
+      console.log(JSON.stringify(newObj), 'newObj=================')
+      const color: string = newObj.price === oldDiff.price ? '' : newObj.price > oldDiff.price ? 'green' : 'red'
+      initObj[newObj.name] = color
+      console.log(initObj, 'initObj==========================')
       return initObj
-    }, {})
+    },{})
     this.items = items
-    console.log(JSON.stringify(this.diffObj), '999999999999999999')
-
   }
 
   @action
@@ -49,7 +46,6 @@ class CurrencyStore {
         }
         return obj
       })
-      console.log(allCoins, 'aaaaaallll')
       this.setItems(allCoins)
     })
   }
@@ -58,7 +54,11 @@ class CurrencyStore {
     console.log(JSON.stringify(arr1), '111111111')
     console.log(arr2, '2222222222222')
     return arr1.filter((obj, index) => {
-      return obj.price !== arr2[index].price;
+      if (obj.price !== arr2[index].price) {
+        return true
+      } else {
+        return false
+      }
     })
   }
 }

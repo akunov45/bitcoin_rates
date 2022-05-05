@@ -19,15 +19,15 @@ const CryptoTable = inject('currencyStore')(
   observer(({classes, currencyStore}: ICryptoTable) => {
     const allCoins: TCoin[] = currencyStore!.getItems
     const diffObj: TCoinDiff = currencyStore!.getDiffObj
+    console.log(JSON.stringify(diffObj),'diffObj-----------component')
 
     React.useEffect(() => {
       if (currencyStore) {
         currencyStore.fetchCoins()
         setInterval(() => {
           currencyStore.fetchCoins()
-        }, 30 * 1000)
+        }, 20 * 1000)
       }
-
     }, [])
 
     return (
@@ -45,7 +45,7 @@ const CryptoTable = inject('currencyStore')(
             </TableHead>
             <TableBody>
               {!allCoins?.length ? 'Loading...' : allCoins?.map((coin) => {
-                console.log(diffObj,'diffObj')
+                console.log(diffObj,'diffObj------CryptoTable')
                 console.log(diffObj[coin.name])
                 return (
                   <TableRow key={coin.name}>
@@ -54,7 +54,7 @@ const CryptoTable = inject('currencyStore')(
                     </TableCell>
                     <TableCell align="left">{coin.name}</TableCell>
                     <TableCell align="left">{coin.fullName}</TableCell>
-                    <TableCell className={classes.redColumn}
+                    <TableCell className={diffObj && classes[`${diffObj[coin.name]}Column`]}
                                align="left">${coin.price}</TableCell>
                     <TableCell align="left">${coin.volume24Hour}</TableCell>
                   </TableRow>
